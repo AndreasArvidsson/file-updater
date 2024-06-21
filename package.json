@@ -9,7 +9,8 @@
     "types": "lib/types/index.d.ts",
     "files": [
         "lib/*",
-        "!*.map"
+        "!*.map",
+        "!lib/tests/*"
     ],
     "repository": {
         "type": "git",
