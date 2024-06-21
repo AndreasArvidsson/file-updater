@@ -1,0 +1,38 @@
+{
+    "name": "file-updater",
+    "description": "Keep files up to date in a project workspace",
+    "version": "0.1.0",
+    "publisher": "AndreasArvidsson",
+    "license": "MIT",
+    "main": "./lib/index.js",
+    "bin": "./lib/cli.js",
+    "types": "lib/types/index.d.ts",
+    "files": [
+        "lib/*",
+        "!*.map"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/AndreasArvidsson/file-updater"
+    },
+    "sponsor": {
+        "url": "https://github.com/sponsors/AndreasArvidsson"
+    },
+    "funding": "https://github.com/sponsors/AndreasArvidsson",
+    "scripts": {
+        "compile": "tsc -p .",
+        "lint": "eslint src",
+        "prettier": "prettier --write ."
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@types/mocha": "10.0.6",
+        "@types/node": "20.14.7",
+        "@typescript-eslint/eslint-plugin": "7.13.1",
+        "@typescript-eslint/parser": "7.13.1",
+        "eslint": "8.57.0",
+        "mocha": "10.4.0",
+        "prettier": "3.3.2",
+        "typescript": "5.4.5"
+    }
+}
