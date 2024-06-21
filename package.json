@@ -1,7 +1,7 @@
 {
     "name": "file-updater",
     "description": "Keep files up to date in a project workspace",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "publisher": "AndreasArvidsson",
     "license": "MIT",
     "main": "./lib/index.js",
