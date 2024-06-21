@@ -7,13 +7,7 @@ import {
     removeFile,
     writeFile,
 } from "./io.js";
-import type {
-    Updater,
-    FileCallback,
-    UpdaterCallbackArg,
-    FileConfig,
-    UpdaterOptions,
-} from "./types.js";
+import type { FileCallback, FileConfig, Updater, UpdaterOptions } from "./types.js";
 
 export function json<T>(callback: FileCallback<T>): FileConfig<T> {
     return {
@@ -50,16 +44,15 @@ function text(callback: FileCallback<string>): FileConfig<string> {
     };
 }
 
-export function updater(getFiles: UpdaterCallbackArg): Promise<void> {
+export function updater(files: Record<string, Updater<any>>): Promise<void> {
     const test = process.argv.slice(2).includes("--test");
     const quiet = process.argv.slice(2).includes("--quiet");
     const workspaceDir = findWorkspaceDir();
-    return performUpdates({ getFiles, workspaceDir, test, quiet });
+    return performUpdates({ files, workspaceDir, test, quiet });
 }
 
 export async function performUpdates(options: UpdaterOptions): Promise<void> {
-    const files = options.getFiles(options.workspaceDir);
-    const updatedFiles = await checkFilesForUpdates(options.workspaceDir, files);
+    const updatedFiles = await checkFilesForUpdates(options.workspaceDir, options.files);
     const changedFiles = updatedFiles.filter((f) => !f.equal);
     const log = options.quiet ? () => {} : (msg: string) => console.log(msg);
 

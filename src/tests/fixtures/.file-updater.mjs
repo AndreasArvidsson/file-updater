@@ -5,7 +5,5 @@ export default async () => {
     const indexPath = path.join(path.dirname(cliPath), "index.js");
     const { updater } = await import(`file://${indexPath}`);
 
-    updater(() => {
-        return {};
-    });
+    await updater({});
 };

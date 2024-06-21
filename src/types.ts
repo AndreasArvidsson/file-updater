@@ -21,10 +21,8 @@ export type Updater<Content> = FileConfig<Content> | FileCallback<string>;
 
 type PromiseOrValue<T> = T | Promise<T>;
 
-export type UpdaterCallbackArg = (workspaceDir: string) => Record<string, Updater<any>>;
-
 export interface UpdaterOptions {
-    getFiles: UpdaterCallbackArg;
+    files: Record<string, Updater<any>>;
     workspaceDir: string;
     test: boolean;
     quiet: boolean;

@@ -11,7 +11,7 @@ suite("Test", () => {
         await performUpdates({
             ...options,
             workspaceDir: tempDirPath,
-            getFiles: () => ({ [file]: (content) => content }),
+            files: { [file]: (content) => content },
         });
     });
 
@@ -22,7 +22,7 @@ suite("Test", () => {
         await performUpdates({
             ...options,
             workspaceDir: tempDirPath,
-            getFiles: () => ({ [file]: json((content: object | null) => content) }),
+            files: { [file]: json((content: object | null) => content) },
         });
     });
 
@@ -31,15 +31,13 @@ suite("Test", () => {
         await performUpdates({
             ...options,
             workspaceDir: tempDirPath,
-            getFiles: () => {
-                return {
-                    ["unknown"]: {
-                        read: () => "Hello, world!",
-                        update: (content: string) => content,
-                        equal: (expected, actual) => expected === actual,
-                        write: () => {},
-                    },
-                };
+            files: {
+                ["unknown"]: {
+                    read: () => "Hello, world!",
+                    update: (content: string) => content,
+                    equal: (expected, actual) => expected === actual,
+                    write: () => {},
+                },
             },
         });
     });
@@ -50,7 +48,7 @@ suite("Test", () => {
             performUpdates({
                 ...options,
                 workspaceDir: tempDirPath,
-                getFiles: () => ({ ["foo.txt"]: () => "foo" }),
+                files: { ["foo.txt"]: () => "foo" },
             }),
         );
     });
@@ -63,7 +61,7 @@ suite("Test", () => {
             performUpdates({
                 ...options,
                 workspaceDir: tempDirPath,
-                getFiles: () => ({ [file]: (content) => content + "2" }),
+                files: { [file]: (content) => content + "2" },
             }),
         );
     });
@@ -76,7 +74,7 @@ suite("Test", () => {
             performUpdates({
                 ...options,
                 workspaceDir: tempDirPath,
-                getFiles: () => ({ [file]: json(() => ({ value: 2 })) }),
+                files: { [file]: json(() => ({ value: 2 })) },
             }),
         );
     });
@@ -87,15 +85,13 @@ suite("Test", () => {
             performUpdates({
                 ...options,
                 workspaceDir: tempDirPath,
-                getFiles: () => {
-                    return {
-                        ["unknown"]: {
-                            read: () => "Hello, world!",
-                            update: (content: string) => content + "2",
-                            equal: (expected, actual) => expected === actual,
-                            write: () => {},
-                        },
-                    };
+                files: {
+                    ["unknown"]: {
+                        read: () => "Hello, world!",
+                        update: (content: string) => content + "2",
+                        equal: (expected, actual) => expected === actual,
+                        write: () => {},
+                    },
                 },
             }),
         );

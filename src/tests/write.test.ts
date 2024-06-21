@@ -13,7 +13,7 @@ suite("Write", () => {
         await performUpdates({
             ...options,
             workspaceDir: tempDirPath,
-            getFiles: () => ({ [file]: (content) => content }),
+            files: { [file]: (content) => content },
         });
         const filePath = path.join(tempDirPath, file);
         assertFileAndContent(filePath, "Hello World");
@@ -26,7 +26,7 @@ suite("Write", () => {
         await performUpdates({
             ...options,
             workspaceDir: tempDirPath,
-            getFiles: () => ({ [file]: json((content: object | null) => content) }),
+            files: { [file]: json((content: object | null) => content) },
         });
         const filePath = path.join(tempDirPath, file);
         assertFileAndContent(filePath, '{\n    "name": "test"\n}\n');
@@ -37,15 +37,13 @@ suite("Write", () => {
         await performUpdates({
             ...options,
             workspaceDir: tempDirPath,
-            getFiles: () => {
-                return {
-                    ["unknown"]: {
-                        read: () => "Hello, world!",
-                        update: (content: string) => content,
-                        equal: (expected, actual) => expected === actual,
-                        write: () => {},
-                    },
-                };
+            files: {
+                ["unknown"]: {
+                    read: () => "Hello, world!",
+                    update: (content: string) => content,
+                    equal: (expected, actual) => expected === actual,
+                    write: () => {},
+                },
             },
         });
     });
@@ -55,7 +53,7 @@ suite("Write", () => {
         await performUpdates({
             ...options,
             workspaceDir: tempDirPath,
-            getFiles: () => ({ ["foo.txt"]: () => "foo" }),
+            files: { ["foo.txt"]: () => "foo" },
         });
         const filePath = path.join(tempDirPath, "foo.txt");
         assertFileAndContent(filePath, "foo");
@@ -68,7 +66,7 @@ suite("Write", () => {
         await performUpdates({
             ...options,
             workspaceDir: tempDirPath,
-            getFiles: () => ({ [file]: (content) => content + "2" }),
+            files: { [file]: (content) => content + "2" },
         });
         const filePath = path.join(tempDirPath, file);
         assertFileAndContent(filePath, "Hello World2");
@@ -81,7 +79,7 @@ suite("Write", () => {
         await performUpdates({
             ...options,
             workspaceDir: tempDirPath,
-            getFiles: () => ({ [file]: json(() => ({ value: 2 })) }),
+            files: { [file]: json(() => ({ value: 2 })) },
         });
         const filePath = path.join(tempDirPath, file);
         assertFileAndContent(filePath, '{\n    "value": 2\n}\n');
@@ -93,17 +91,15 @@ suite("Write", () => {
         await performUpdates({
             ...options,
             workspaceDir: tempDirPath,
-            getFiles: () => {
-                return {
-                    [file]: {
-                        read: () => "",
-                        update: () => "foo",
-                        equal: (expected, actual) => expected === actual,
-                        write: (filePath, expected: string) => {
-                            writeFile(filePath, expected);
-                        },
+            files: {
+                [file]: {
+                    read: () => "",
+                    update: () => "foo",
+                    equal: (expected, actual) => expected === actual,
+                    write: (filePath, expected: string) => {
+                        writeFile(filePath, expected);
                     },
-                };
+                },
             },
         });
         const filePath = path.join(tempDirPath, file);
