@@ -19,7 +19,7 @@ Create file `.file-updater.mjs` that calls the updater function. Place it in the
 import { updater, json } from "file-updater";
 
 export default () => {
-    updater((workspaceDir) => {
+    return updater((workspaceDir) => {
         return {
             // Simple string updater callback.
             // Get the actual text from the file on disk and return the updated expected text.
