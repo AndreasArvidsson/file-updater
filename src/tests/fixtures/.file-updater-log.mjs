@@ -1,1 +1,3 @@
-console.log("fixtures/file-updater.mjs");
+export default () => {
+    console.log("fixtures/file-updater.mjs");
+};

@@ -18,38 +18,40 @@ Create file `.file-updater.mjs` that calls the updater function. Place it in the
 // File: `.file-updater.mjs`
 import { updater, json } from "file-updater";
 
-updater((workspaceDir) => {
-    return {
-        // Simple string updater callback.
-        // Get the actual text from the file on disk and return the updated expected text.
-        ".gitignore": (actualText, path) => {
-            return actualText + "\nlib";
-        },
-
-        // Json file using the `json()` utility.
-        // Get the actual json from the file on disk and return the updated expected json.
-        "package.json": json((actualManifest, path) => {
-            return {
-                ...actualManifest,
-                author: "Andreas Arvidsson",
-            };
-        }),
-
-        // Support any custom format by providing the read, updates, equal and write callbacks.
-        ".csv": {
-            // Read csv file on disk and return actual csv instance.
-            read: (path) => csvParser.read(path),
-            // Get the actual csv from the file on disk and return the updated expected csv.
-            update: (actualCsv, options) => {
-                return actualCsv.append("foo", "bar");
+export default () => {
+    updater((workspaceDir) => {
+        return {
+            // Simple string updater callback.
+            // Get the actual text from the file on disk and return the updated expected text.
+            ".gitignore": (actualText, path) => {
+                return actualText + "\nlib";
             },
-            // Compare expected and actual csv instances. Return true if equal.
-            equal: (expectedCsv, actualCsv) => expectedCsv.equals(actualCsv),
-            // Expected and actual is not equal. Write actual csv to disk.
-            write: (path, expectedCsv) => expectedCsv.write(path),
-        },
-    };
-});
+
+            // Json file using the `json()` utility.
+            // Get the actual json from the file on disk and return the updated expected json.
+            "package.json": json((actualManifest, path) => {
+                return {
+                    ...actualManifest,
+                    author: "Andreas Arvidsson",
+                };
+            }),
+
+            // Support any custom format by providing the read, updates, equal and write callbacks.
+            ".csv": {
+                // Read csv file on disk and return actual csv instance.
+                read: (path) => csvParser.read(path),
+                // Get the actual csv from the file on disk and return the updated expected csv.
+                update: (actualCsv, options) => {
+                    return actualCsv.append("foo", "bar");
+                },
+                // Compare expected and actual csv instances. Return true if equal.
+                equal: (expectedCsv, actualCsv) => expectedCsv.equals(actualCsv),
+                // Expected and actual is not equal. Write actual csv to disk.
+                write: (path, expectedCsv) => expectedCsv.write(path),
+            },
+        };
+    });
+};
 ```
 
 ### Run

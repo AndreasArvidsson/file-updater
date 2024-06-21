@@ -1,6 +1,6 @@
 import * as path from "node:path";
 
-(async () => {
+export default async () => {
     const cliPath = process.argv[1];
     const indexPath = path.join(path.dirname(cliPath), "index.js");
     const { updater } = await import(`file://${indexPath}`);
@@ -8,4 +8,4 @@ import * as path from "node:path";
     updater(() => {
         return {};
     });
-})();
+};

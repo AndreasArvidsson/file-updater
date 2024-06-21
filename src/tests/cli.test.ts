@@ -13,7 +13,7 @@ suite("cli", () => {
     test("missing .file-updater.mjs", async () => {
         const tempDirPath = temporaryDirectory();
         copyFixture(tempDirPath, "package.json");
-        await throwsAsync(cli(tempDirPath), /^ERROR: Can't find '.file-updater.mjs'/);
+        await throwsAsync(cli(tempDirPath), /^ERROR: Can't find file '.file-updater.mjs'/);
     });
 
     test(".file-updater-log.mjs", async () => {
