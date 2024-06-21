@@ -14,16 +14,14 @@ export interface FileConfig<Content> {
 // `actual` is `null` when file doesn't exist
 export type FileCallback<Content> = (
     actual: Content | null,
-    options: { file: string; path: string }
+    options: { file: string; path: string },
 ) => PromiseOrValue<Content | null>;
 
 export type Updater<Content> = FileConfig<Content> | FileCallback<string>;
 
 type PromiseOrValue<T> = T | Promise<T>;
 
-export type UpdaterCallbackArg = (
-    workspaceDir: string
-) => Record<string, Updater<any>>;
+export type UpdaterCallbackArg = (workspaceDir: string) => Record<string, Updater<any>>;
 
 export interface UpdaterOptions {
     getFiles: UpdaterCallbackArg;

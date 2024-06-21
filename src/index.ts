@@ -1,11 +1,5 @@
 import * as path from "node:path";
-import {
-    findWorkspaceDir,
-    readFile,
-    readJsonFile,
-    removeFile,
-    writeFile,
-} from "./io";
+import { findWorkspaceDir, readFile, readJsonFile, removeFile, writeFile } from "./io";
 import type {
     Updater,
     FileCallback,
@@ -55,9 +49,7 @@ export function updater(getFiles: UpdaterCallbackArg): Promise<void> {
     return updaterWithOptions({ getFiles, test, quiet });
 }
 
-export async function updaterWithOptions(
-    options: UpdaterOptions
-): Promise<void> {
+export async function updaterWithOptions(options: UpdaterOptions): Promise<void> {
     const workspaceDir = findWorkspaceDir();
     const files = options.getFiles(workspaceDir);
     const updaterConfigs = convertCallbacksToConfigs(files);
@@ -90,28 +82,22 @@ export async function updaterWithOptions(
 
 async function performUpdates(
     workspaceDir: string,
-    replacers: Record<string, FileConfig<unknown>>
+    replacers: Record<string, FileConfig<unknown>>,
 ) {
     return await Promise.all(
         Object.entries(replacers).map(([filename, config]) => {
             return performUpdate(workspaceDir, filename, config);
-        })
+        }),
     );
 }
 
-async function performUpdate(
-    workspaceDir: string,
-    file: string,
-    config: FileConfig<unknown>
-) {
+async function performUpdate(workspaceDir: string, file: string, config: FileConfig<unknown>) {
     const filePath = path.join(workspaceDir, file);
     const contentActual = await Promise.resolve(config.read(filePath));
     const contentExpected = await Promise.resolve(
-        config.update(contentActual, { file, path: filePath })
+        config.update(contentActual, { file, path: filePath }),
     );
-    const relativePath = path
-        .relative(workspaceDir, filePath)
-        .replace(/\\/g, "/");
+    const relativePath = path.relative(workspaceDir, filePath).replace(/\\/g, "/");
     const equal = await isEqual(config, contentExpected, contentActual);
     return {
         equal,
@@ -120,11 +106,7 @@ async function performUpdate(
     };
 }
 
-async function write(
-    config: FileConfig<unknown>,
-    filePath: string,
-    expected: unknown
-) {
+async function write(config: FileConfig<unknown>, filePath: string, expected: unknown) {
     if (expected == null) {
         removeFile(filePath);
     } else {
@@ -135,7 +117,7 @@ async function write(
 async function isEqual(
     config: FileConfig<unknown>,
     expected: unknown,
-    actual: unknown
+    actual: unknown,
 ): Promise<boolean> {
     return (
         (actual == null && expected == null) ||
@@ -146,14 +128,11 @@ async function isEqual(
 }
 
 function convertCallbacksToConfigs(
-    replacers: Record<string, Updater<unknown>>
+    replacers: Record<string, Updater<unknown>>,
 ): Record<string, FileConfig<any>> {
     return Object.fromEntries(
         Object.entries(replacers).map(([filename, callback]) => {
-            return [
-                filename,
-                typeof callback === "function" ? text(callback) : callback,
-            ];
-        })
+            return [filename, typeof callback === "function" ? text(callback) : callback];
+        }),
     );
 }

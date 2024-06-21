@@ -31,7 +31,5 @@ export function findWorkspaceDir(): string {
     if (fileExists(packageJsonPath)) {
         return cwd;
     }
-    throw Error(
-        `Can't find workspace root containing 'package.json' at '${cwd}'`
-    );
+    throw Error(`Can't find workspace root containing 'package.json' at '${cwd}'`);
 }
