@@ -10,7 +10,7 @@ npm install file-updater
 
 ## Usage
 
-Create file `.file-updater.mjs` that calls the updater function.
+Create file `.file-updater.mjs` that calls the updater function. Place it in the project root next to `package.json`.
 
 ### Example
 
