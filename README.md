@@ -35,7 +35,7 @@ export default (workspaceDir) => {
             };
         }),
 
-        // Support any custom format by providing the read, updates, equal and write callbacks.
+        // Support any custom format by providing the read, update, equal and write callbacks.
         ".csv": {
             // Read csv file on disk and return actual csv instance.
             read: (path) => csvParser.read(path),
