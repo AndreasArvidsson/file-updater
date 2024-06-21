@@ -23,7 +23,7 @@ void (async () => {
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        cli();
+        await Promise.resolve(cli());
     } catch (error) {
         const { message } = error as Error;
         console.error(`ERROR: ${message}`);
