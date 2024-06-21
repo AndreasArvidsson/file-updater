@@ -5,7 +5,9 @@
     "publisher": "AndreasArvidsson",
     "license": "MIT",
     "main": "./lib/index.js",
-    "bin": "./lib/cli.js",
+    "bin": {
+        "file-updater": "lib/cli.js"
+    },
     "types": "lib/types/index.d.ts",
     "files": [
         "lib/*",
@@ -14,7 +16,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/AndreasArvidsson/file-updater"
+        "url": "git+https://github.com/AndreasArvidsson/file-updater.git"
     },
     "sponsor": {
         "url": "https://github.com/sponsors/AndreasArvidsson"
