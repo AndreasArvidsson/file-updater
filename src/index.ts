@@ -1,12 +1,12 @@
 import * as path from "node:path";
-import { findWorkspaceDir, readFile, readJsonFile, removeFile, writeFile } from "./io";
+import { findWorkspaceDir, readFile, readJsonFile, removeFile, writeFile } from "./io.js";
 import type {
     Updater,
     FileCallback,
     UpdaterCallbackArg,
     FileConfig,
     UpdaterOptions,
-} from "./types";
+} from "./types.js";
 
 export function json<T>(callback: FileCallback<T>): FileConfig<T> {
     return {

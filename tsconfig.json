@@ -12,7 +12,8 @@
         "sourceMap": true,
         "strict": true,
         "noEmitOnError": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitReturns": true
     },
-    "include": ["src"]
+    "include": ["src", "src/tests/fixtures/.file-updater.mjs"]
 }

@@ -21,18 +21,24 @@
     "funding": "https://github.com/sponsors/AndreasArvidsson",
     "scripts": {
         "compile": "tsc -p .",
-        "lint": "eslint src",
-        "prettier": "prettier --write ."
+        "prettier": "prettier --write .",
+        "test:meta": "eslint src && prettier --check .",
+        "test": "npm run compile && tsx src/tests/runTests.ts"
     },
     "dependencies": {},
     "devDependencies": {
         "@types/mocha": "10.0.6",
         "@types/node": "20.14.7",
+        "@types/uuid": "10.0.0",
         "@typescript-eslint/eslint-plugin": "7.13.1",
         "@typescript-eslint/parser": "7.13.1",
         "eslint": "8.57.0",
+        "execa": "9.2.0",
+        "glob": "10.4.2",
         "mocha": "10.4.0",
         "prettier": "3.3.2",
-        "typescript": "5.4.5"
+        "tsx": "4.15.7",
+        "typescript": "5.4.5",
+        "uuid": "10.0.0"
     }
 }
