@@ -1,29 +1,19 @@
 import assert from "node:assert";
-import * as fs from "node:fs";
-import * as path from "node:path";
-import { cli, temporaryDirectory, throwsAsync } from "./utils";
-
-const fixturesPath = path.join(__dirname, "fixtures");
-
-type Fixture = "package.json" | ".file-updater-log.mjs" | ".file-updater.mjs";
-
-function copyFixture(tmpPath: string, source: Fixture, destination?: Fixture) {
-    fs.copyFileSync(path.join(fixturesPath, source), path.join(tmpPath, destination ?? source));
-}
+import { cli, copyFixture, temporaryDirectory, throwsAsync } from "./testUtils";
 
 suite("cli", () => {
     test("missing package.json", async () => {
         const tempDirPath = temporaryDirectory();
         await throwsAsync(
-            async () => cli(tempDirPath),
-            /^Can't find workspace root containing 'package.json'/,
+            cli(tempDirPath),
+            /^ERROR: Can't find workspace root containing 'package.json'/,
         );
     });
 
     test("missing .file-updater.mjs", async () => {
         const tempDirPath = temporaryDirectory();
         copyFixture(tempDirPath, "package.json");
-        await throwsAsync(async () => cli(tempDirPath), /Can't find '.file-updater.mjs'/);
+        await throwsAsync(cli(tempDirPath), /^ERROR: Can't find '.file-updater.mjs'/);
     });
 
     test(".file-updater-log.mjs", async () => {
@@ -32,5 +22,13 @@ suite("cli", () => {
         copyFixture(tempDirPath, ".file-updater-log.mjs", ".file-updater.mjs");
         const stdout = await cli(tempDirPath);
         assert.equal(stdout, "fixtures/file-updater.mjs");
+    });
+
+    test(".file-updater.mjs", async () => {
+        const tempDirPath = temporaryDirectory();
+        copyFixture(tempDirPath, "package.json");
+        copyFixture(tempDirPath, ".file-updater.mjs");
+        const stdout = await cli(tempDirPath);
+        assert.equal(stdout, "Updater found no changes to files.");
     });
 });

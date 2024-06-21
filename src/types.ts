@@ -25,6 +25,7 @@ export type UpdaterCallbackArg = (workspaceDir: string) => Record<string, Update
 
 export interface UpdaterOptions {
     getFiles: UpdaterCallbackArg;
+    workspaceDir: string;
     test: boolean;
     quiet: boolean;
 }

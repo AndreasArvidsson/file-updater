@@ -1,5 +1,12 @@
 import * as path from "node:path";
-import { findWorkspaceDir, readFile, readJsonFile, removeFile, writeFile } from "./io.js";
+import {
+    fileExists,
+    findWorkspaceDir,
+    readFile,
+    readJsonFile,
+    removeFile,
+    writeFile,
+} from "./io.js";
 import type {
     Updater,
     FileCallback,
@@ -46,16 +53,14 @@ function text(callback: FileCallback<string>): FileConfig<string> {
 export function updater(getFiles: UpdaterCallbackArg): Promise<void> {
     const test = process.argv.slice(2).includes("--test");
     const quiet = process.argv.slice(2).includes("--quiet");
-    return updaterWithOptions({ getFiles, test, quiet });
+    const workspaceDir = findWorkspaceDir();
+    return performUpdates({ getFiles, workspaceDir, test, quiet });
 }
 
-export async function updaterWithOptions(options: UpdaterOptions): Promise<void> {
-    const workspaceDir = findWorkspaceDir();
-    const files = options.getFiles(workspaceDir);
-    const updaterConfigs = convertCallbacksToConfigs(files);
-    const updatedFiles = await performUpdates(workspaceDir, updaterConfigs);
+export async function performUpdates(options: UpdaterOptions): Promise<void> {
+    const files = options.getFiles(options.workspaceDir);
+    const updatedFiles = await checkFilesForUpdates(options.workspaceDir, files);
     const changedFiles = updatedFiles.filter((f) => !f.equal);
-
     const log = options.quiet ? () => {} : (msg: string) => console.log(msg);
 
     if (changedFiles.length === 0) {
@@ -66,11 +71,11 @@ export async function updaterWithOptions(options: UpdaterOptions): Promise<void>
     const msg = `Updater found changes to ${changedFiles.length} files:`;
 
     if (options.test) {
-        console.error(`ERROR: ${msg}`);
+        const msgParts = [msg];
         for (const file of changedFiles) {
-            console.error(file.toString());
+            msgParts.push(file.toString());
         }
-        process.exit(1);
+        throw Error(msgParts.join("\n"));
     }
 
     log(msg);
@@ -80,20 +85,24 @@ export async function updaterWithOptions(options: UpdaterOptions): Promise<void>
     }
 }
 
-async function performUpdates(
-    workspaceDir: string,
-    replacers: Record<string, FileConfig<unknown>>,
-) {
+async function checkFilesForUpdates(workspaceDir: string, files: Record<string, Updater<unknown>>) {
+    const updaterConfigs = convertCallbacksToConfigs(files);
     return await Promise.all(
-        Object.entries(replacers).map(([filename, config]) => {
-            return performUpdate(workspaceDir, filename, config);
+        Object.entries(updaterConfigs).map(([filename, config]) => {
+            return checkFileForUpdates(workspaceDir, filename, config);
         }),
     );
 }
 
-async function performUpdate(workspaceDir: string, file: string, config: FileConfig<unknown>) {
+async function checkFileForUpdates(
+    workspaceDir: string,
+    file: string,
+    config: FileConfig<unknown>,
+) {
     const filePath = path.join(workspaceDir, file);
-    const contentActual = await Promise.resolve(config.read(filePath));
+    const contentActual = fileExists(filePath)
+        ? await Promise.resolve(config.read(filePath))
+        : null;
     const contentExpected = await Promise.resolve(
         config.update(contentActual, { file, path: filePath }),
     );
@@ -128,10 +137,10 @@ async function isEqual(
 }
 
 function convertCallbacksToConfigs(
-    replacers: Record<string, Updater<unknown>>,
+    files: Record<string, Updater<unknown>>,
 ): Record<string, FileConfig<any>> {
     return Object.fromEntries(
-        Object.entries(replacers).map(([filename, callback]) => {
+        Object.entries(files).map(([filename, callback]) => {
             return [filename, typeof callback === "function" ? text(callback) : callback];
         }),
     );

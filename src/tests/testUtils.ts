@@ -3,6 +3,12 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { v4 as uuid } from "uuid";
+import { fileExists, readFile } from "../io";
+
+const cliPath = path.join(__dirname, "../../lib/cli.js");
+const fixturesPath = path.join(__dirname, "fixtures");
+
+type Fixture = "package.json" | ".file-updater-log.mjs" | ".file-updater.mjs" | "helloWorld.txt";
 
 export function temporaryDirectory(): string {
     const dirPath = path.join(os.tmpdir(), uuid());
@@ -12,12 +18,9 @@ export function temporaryDirectory(): string {
     return dirPath;
 }
 
-export async function throwsAsync(
-    callback: () => Promise<unknown>,
-    expectedError?: RegExp | string,
-) {
+export async function throwsAsync(promise: Promise<unknown>, expectedError?: RegExp | string) {
     try {
-        await callback();
+        await promise;
         assert.fail("Expected an error to be thrown");
     } catch (error) {
         if (expectedError != null) {
@@ -35,7 +38,6 @@ export async function throwsAsync(
 }
 
 export async function cli(cwd: string): Promise<string> {
-    const cliPath = path.join(__dirname, "../../lib/cli.js");
     const { execa } = await import("execa");
     try {
         const { stdout } = await execa("node", [cliPath], { cwd });
@@ -49,4 +51,14 @@ export async function cli(cwd: string): Promise<string> {
         const message = stderr || stdout || shortMessage;
         throw Error(message);
     }
+}
+
+export function copyFixture(tmpPath: string, source: Fixture, destination?: Fixture) {
+    fs.copyFileSync(path.join(fixturesPath, source), path.join(tmpPath, destination ?? source));
+}
+
+export function assertFileAndContent(filePath: string, expected: string) {
+    assert.ok(fileExists(filePath), `Expected file '${filePath}' to exist`);
+    const actual = readFile(filePath).toString("utf8");
+    assert.equal(actual, expected);
 }

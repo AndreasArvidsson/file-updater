@@ -14,6 +14,7 @@ try {
 
     void import(`file://${entryPath}`);
 } catch (error) {
-    console.log((error as Error).message);
+    const { message } = error as Error;
+    console.error(`ERROR: ${message}`);
     process.exit(1);
 }
