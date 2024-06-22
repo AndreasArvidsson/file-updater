@@ -5,6 +5,8 @@ import { fileExists, findWorkspaceDir } from "./io.js";
 
 const CLI_ENTRY = ".file-updater.mjs";
 
+type ExportedFunction = (workspaceDir: string) => unknown;
+
 void (async () => {
     try {
         const workspaceDir = findWorkspaceDir();
@@ -22,10 +24,11 @@ void (async () => {
             throw Error(`${CLI_ENTRY} should export a function as default`);
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        await Promise.resolve(cli(workspaceDir));
+        const returnValue = (cli as ExportedFunction)(workspaceDir);
+
+        await Promise.resolve(returnValue);
     } catch (error) {
-        const { message } = error as Error;
+        const message = error instanceof Error ? error.message : String(error);
         console.error(`ERROR: ${message}`);
         process.exit(1);
     }

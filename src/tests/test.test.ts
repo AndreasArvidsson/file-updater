@@ -1,4 +1,4 @@
-import { json, performUpdates } from "..";
+import { json, updaterWithOptions } from "..";
 import { copyFixture, temporaryDirectory, throwsAsync } from "./testUtils";
 
 const options = { test: true, quiet: true };
@@ -8,30 +8,32 @@ suite("Test", () => {
         const tempDirPath = temporaryDirectory();
         const file = "helloWorld.txt";
         copyFixture(tempDirPath, file);
-        await performUpdates({
-            ...options,
-            workspaceDir: tempDirPath,
-            files: { [file]: (content) => content },
-        });
+        await updaterWithOptions(
+            { [file]: (content) => content },
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
     });
 
     test("No changes: json", async () => {
         const tempDirPath = temporaryDirectory();
         const file = "package.json";
         copyFixture(tempDirPath, file);
-        await performUpdates({
-            ...options,
-            workspaceDir: tempDirPath,
-            files: { [file]: json((content: object | null) => content) },
-        });
+        await updaterWithOptions(
+            { [file]: json((content: object | null) => content) },
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
     });
 
     test("No changes: config", async () => {
         const tempDirPath = temporaryDirectory();
-        await performUpdates({
-            ...options,
-            workspaceDir: tempDirPath,
-            files: {
+        await updaterWithOptions(
+            {
                 ["unknown"]: {
                     read: () => "Hello, world!",
                     update: (content: string) => content,
@@ -39,17 +41,23 @@ suite("Test", () => {
                     write: () => {},
                 },
             },
-        });
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
     });
 
     test("New file: callback", async () => {
         const tempDirPath = temporaryDirectory();
         await throwsAsync(
-            performUpdates({
-                ...options,
-                workspaceDir: tempDirPath,
-                files: { ["foo.txt"]: () => "foo" },
-            }),
+            updaterWithOptions(
+                { ["foo.txt"]: () => "foo" },
+                {
+                    ...options,
+                    workspaceDir: tempDirPath,
+                },
+            ),
         );
     });
 
@@ -58,11 +66,13 @@ suite("Test", () => {
         const file = "helloWorld.txt";
         copyFixture(tempDirPath, file);
         await throwsAsync(
-            performUpdates({
-                ...options,
-                workspaceDir: tempDirPath,
-                files: { [file]: (content) => content + "2" },
-            }),
+            updaterWithOptions(
+                { [file]: (content) => content + "2" },
+                {
+                    ...options,
+                    workspaceDir: tempDirPath,
+                },
+            ),
         );
     });
 
@@ -71,21 +81,21 @@ suite("Test", () => {
         const file = "package.json";
         copyFixture(tempDirPath, file);
         await throwsAsync(
-            performUpdates({
-                ...options,
-                workspaceDir: tempDirPath,
-                files: { [file]: json(() => ({ value: 2 })) },
-            }),
+            updaterWithOptions(
+                { [file]: json(() => ({ value: 2 })) },
+                {
+                    ...options,
+                    workspaceDir: tempDirPath,
+                },
+            ),
         );
     });
 
     test("Changes: config", async () => {
         const tempDirPath = temporaryDirectory();
         await throwsAsync(
-            performUpdates({
-                ...options,
-                workspaceDir: tempDirPath,
-                files: {
+            updaterWithOptions(
+                {
                     ["unknown"]: {
                         read: () => "Hello, world!",
                         update: (content: string) => content + "2",
@@ -93,7 +103,11 @@ suite("Test", () => {
                         write: () => {},
                     },
                 },
-            }),
+                {
+                    ...options,
+                    workspaceDir: tempDirPath,
+                },
+            ),
         );
     });
 });

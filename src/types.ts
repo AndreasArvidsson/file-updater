@@ -17,13 +17,14 @@ export type FileCallback<Content> = (
     options: { file: string; path: string },
 ) => PromiseOrValue<Content | null>;
 
-export type Updater<Content> = FileConfig<Content> | FileCallback<string>;
-
 type PromiseOrValue<T> = T | Promise<T>;
 
+export type FileConfigOrCallback<Content> = FileConfig<Content> | FileCallback<string>;
+
+export type FilesArg = Record<string, FileConfigOrCallback<any>>;
+
 export interface UpdaterOptions {
-    files: Record<string, Updater<any>>;
-    workspaceDir: string;
-    test: boolean;
-    quiet: boolean;
+    workspaceDir?: string;
+    test?: boolean;
+    quiet?: boolean;
 }

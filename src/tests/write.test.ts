@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { json, performUpdates } from "..";
+import { json, updaterWithOptions } from "..";
 import { assertFileAndContent, copyFixture, temporaryDirectory } from "./testUtils";
 import { writeFile } from "../io";
 
@@ -10,11 +10,13 @@ suite("Write", () => {
         const tempDirPath = temporaryDirectory();
         const file = "helloWorld.txt";
         copyFixture(tempDirPath, file);
-        await performUpdates({
-            ...options,
-            workspaceDir: tempDirPath,
-            files: { [file]: (content) => content },
-        });
+        await updaterWithOptions(
+            { [file]: (content) => content },
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
         const filePath = path.join(tempDirPath, file);
         assertFileAndContent(filePath, "Hello World");
     });
@@ -23,21 +25,21 @@ suite("Write", () => {
         const tempDirPath = temporaryDirectory();
         const file = "package.json";
         copyFixture(tempDirPath, file);
-        await performUpdates({
-            ...options,
-            workspaceDir: tempDirPath,
-            files: { [file]: json((content: object | null) => content) },
-        });
+        await updaterWithOptions(
+            { [file]: json((content: object | null) => content) },
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
         const filePath = path.join(tempDirPath, file);
         assertFileAndContent(filePath, '{\n    "name": "test"\n}\n');
     });
 
     test("No changes: config", async () => {
         const tempDirPath = temporaryDirectory();
-        await performUpdates({
-            ...options,
-            workspaceDir: tempDirPath,
-            files: {
+        await updaterWithOptions(
+            {
                 ["unknown"]: {
                     read: () => "Hello, world!",
                     update: (content: string) => content,
@@ -45,16 +47,22 @@ suite("Write", () => {
                     write: () => {},
                 },
             },
-        });
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
     });
 
     test("New file: callback", async () => {
         const tempDirPath = temporaryDirectory();
-        await performUpdates({
-            ...options,
-            workspaceDir: tempDirPath,
-            files: { ["foo.txt"]: () => "foo" },
-        });
+        await updaterWithOptions(
+            { ["foo.txt"]: () => "foo" },
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
         const filePath = path.join(tempDirPath, "foo.txt");
         assertFileAndContent(filePath, "foo");
     });
@@ -63,11 +71,13 @@ suite("Write", () => {
         const tempDirPath = temporaryDirectory();
         const file = "helloWorld.txt";
         copyFixture(tempDirPath, file);
-        await performUpdates({
-            ...options,
-            workspaceDir: tempDirPath,
-            files: { [file]: (content) => content + "2" },
-        });
+        await updaterWithOptions(
+            { [file]: (content) => content + "2" },
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
         const filePath = path.join(tempDirPath, file);
         assertFileAndContent(filePath, "Hello World2");
     });
@@ -76,11 +86,13 @@ suite("Write", () => {
         const tempDirPath = temporaryDirectory();
         const file = "package.json";
         copyFixture(tempDirPath, file);
-        await performUpdates({
-            ...options,
-            workspaceDir: tempDirPath,
-            files: { [file]: json(() => ({ value: 2 })) },
-        });
+        await updaterWithOptions(
+            { [file]: json(() => ({ value: 2 })) },
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
         const filePath = path.join(tempDirPath, file);
         assertFileAndContent(filePath, '{\n    "value": 2\n}\n');
     });
@@ -88,10 +100,8 @@ suite("Write", () => {
     test("New file: config", async () => {
         const tempDirPath = temporaryDirectory();
         const file = "foo.txt";
-        await performUpdates({
-            ...options,
-            workspaceDir: tempDirPath,
-            files: {
+        await updaterWithOptions(
+            {
                 [file]: {
                     read: () => "",
                     update: () => "foo",
@@ -101,7 +111,11 @@ suite("Write", () => {
                     },
                 },
             },
-        });
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
         const filePath = path.join(tempDirPath, file);
         assertFileAndContent(filePath, "foo");
     });
