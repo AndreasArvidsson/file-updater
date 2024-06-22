@@ -14,8 +14,17 @@ Create file `.file-updater.mjs` that calls the updater function. Place it in the
 
 ### Example
 
+Run `npm run file-updater`
+
+```json
+"scripts": {
+    "file-updater": "file-updater"
+}
+```
+
+File: `.file-updater.mjs`
+
 ```ts
-// File: `.file-updater.mjs`
 import { updater, json } from "file-updater";
 
 export default (workspaceDir) => {
@@ -61,7 +70,7 @@ export default (workspaceDir) => {
 It's recommended to always check that all files are updated before running tests.
 
 ```json
-{
+"scripts": {
     "test": "file-updater --test && mocha"
 }
 ```
