@@ -12,7 +12,8 @@
     "files": [
         "lib/*",
         "!*.map",
-        "!lib/tests/*"
+        "!lib/tests/*",
+        "!lib/types/tests/*"
     ],
     "repository": {
         "type": "git",
