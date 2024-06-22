@@ -119,4 +119,45 @@ suite("Write", () => {
         const filePath = path.join(tempDirPath, file);
         assertFileAndContent(filePath, "foo");
     });
+
+    test("New dir: config", async () => {
+        const tempDirPath = temporaryDirectory();
+        const file = "foo/bar.txt";
+        await updaterWithOptions(
+            {
+                [file]: {
+                    read: () => "",
+                    update: () => "foobar",
+                    equal: (expected, actual) => expected === actual,
+                    write: (filePath, expected: string) => {
+                        writeFile(filePath, expected);
+                    },
+                },
+            },
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
+        const filePath = path.join(tempDirPath, file);
+        assertFileAndContent(filePath, "foobar");
+    });
+
+    test.only("Remove non-existing file: config", async () => {
+        const tempDirPath = temporaryDirectory();
+        await updaterWithOptions(
+            {
+                ["foo/bar.txt"]: {
+                    read: () => "",
+                    update: () => null,
+                    equal: () => false,
+                    write: () => {},
+                },
+            },
+            {
+                ...options,
+                workspaceDir: tempDirPath,
+            },
+        );
+    });
 });

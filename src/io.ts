@@ -33,3 +33,7 @@ export function findWorkspaceDir(): string {
     }
     throw Error(`Can't find workspace root containing 'package.json' at '${cwd}'`);
 }
+
+export function makeDirs(dirPath: string): void {
+    fs.mkdirSync(dirPath, { recursive: true });
+}

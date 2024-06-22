@@ -2,6 +2,7 @@ import * as path from "node:path";
 import {
     fileExists,
     findWorkspaceDir,
+    makeDirs,
     readFile,
     readJsonFile,
     removeFile,
@@ -10,8 +11,8 @@ import {
 import type {
     FileCallback,
     FileConfig,
-    FilesArg,
     FileConfigOrCallback,
+    FilesArg,
     UpdaterOptions,
 } from "./types.js";
 
@@ -127,6 +128,7 @@ async function write(config: FileConfig<unknown>, filePath: string, expected: un
     if (expected == null) {
         removeFile(filePath);
     } else {
+        makeDirs(path.dirname(filePath));
         await Promise.resolve(config.write(filePath, expected));
     }
 }
