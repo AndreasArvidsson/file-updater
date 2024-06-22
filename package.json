@@ -11,9 +11,9 @@
     "types": "lib/types/index.d.ts",
     "files": [
         "lib/*",
-        "!*.map",
         "!lib/tests/*",
-        "!lib/types/tests/*"
+        "!lib/types/tests/*",
+        "!*.map"
     ],
     "repository": {
         "type": "git",
@@ -25,7 +25,7 @@
     "funding": "https://github.com/sponsors/AndreasArvidsson",
     "scripts": {
         "compile": "tsc -p .",
-        "prettier": "prettier --write .",
+        "fix:meta": "prettier --write .",
         "test:meta": "eslint src && prettier --check .",
         "test": "npm run compile && tsx src/tests/runTests.ts"
     },
