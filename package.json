@@ -1,7 +1,7 @@
 {
     "name": "file-updater",
     "description": "Keep files up to date in a project workspace",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "publisher": "AndreasArvidsson",
     "license": "MIT",
     "main": "./lib/index.js",
@@ -12,8 +12,7 @@
     "files": [
         "lib/*",
         "!lib/tests/*",
-        "!lib/types/tests/*",
-        "!*.map"
+        "!lib/types/tests/*"
     ],
     "repository": {
         "type": "git",
