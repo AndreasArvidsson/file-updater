@@ -1,7 +1,7 @@
 {
     "name": "file-updater",
     "description": "Keep files up to date in a project workspace",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "publisher": "AndreasArvidsson",
     "license": "MIT",
     "main": "./lib/index.js",
@@ -23,6 +23,7 @@
     },
     "funding": "https://github.com/sponsors/AndreasArvidsson",
     "scripts": {
+        "example": "tsx src/tests/example.ts",
         "compile": "tsc -p .",
         "fix:meta": "prettier --write .",
         "test:meta": "eslint src && prettier --check .",

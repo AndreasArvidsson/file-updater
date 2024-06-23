@@ -2,6 +2,7 @@
 
 import * as path from "node:path";
 import { fileExists, findWorkspaceDir } from "./io.js";
+import { logError } from "./logger.js";
 
 const CLI_ENTRY = ".file-updater.mjs";
 
@@ -29,7 +30,7 @@ void (async () => {
         await Promise.resolve(returnValue);
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        console.error(`ERROR: ${message}`);
+        logError(message);
         process.exit(1);
     }
 })();

@@ -6,14 +6,14 @@ suite("cli", () => {
         const tempDirPath = temporaryDirectory();
         await throwsAsync(
             cli(tempDirPath),
-            /^ERROR: Can't find workspace root containing 'package.json'/,
+            /^\[ERROR\] Can't find workspace root containing 'package.json'/,
         );
     });
 
     test("missing .file-updater.mjs", async () => {
         const tempDirPath = temporaryDirectory();
         copyFixture(tempDirPath, "package.json");
-        await throwsAsync(cli(tempDirPath), /^ERROR: Can't find file '.file-updater.mjs'/);
+        await throwsAsync(cli(tempDirPath), /^\[ERROR\] Can't find file '.file-updater.mjs'/);
     });
 
     test(".file-updater-log.mjs", async () => {
@@ -29,6 +29,6 @@ suite("cli", () => {
         copyFixture(tempDirPath, "package.json");
         copyFixture(tempDirPath, ".file-updater.mjs");
         const stdout = await cli(tempDirPath);
-        assert.equal(stdout, "Updater found no changes to files.");
+        assert.equal(stdout, "Running updater...\nUpdater found no changes to files.");
     });
 });

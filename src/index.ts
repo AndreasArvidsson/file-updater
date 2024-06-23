@@ -8,6 +8,7 @@ import {
     removeFile,
     writeFile,
 } from "./io.js";
+import { createLogger, logError } from "./logger.js";
 import type {
     FileCallback,
     FileConfig,
@@ -58,38 +59,44 @@ export function updater(files: FilesArg): Promise<void> {
         return updaterWithOptions(files, { test, quiet });
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        console.error(`ERROR: ${message}`);
+        logError(message);
         process.exit(1);
     }
 }
 
-export async function updaterWithOptions(files: FilesArg, options: UpdaterOptions): Promise<void> {
+export async function updaterWithOptions(
+    files: FilesArg,
+    options: UpdaterOptions = {},
+): Promise<void> {
+    const logger = createLogger(options);
+
+    logger.info("Running updater...");
+
     const workspaceDir = options.workspaceDir ?? findWorkspaceDir();
     const fileConfigs = convertCallbacksToConfigs(files);
     const updatedFiles = await checkFilesForUpdates(fileConfigs, workspaceDir);
     const changedFiles = updatedFiles.filter((f) => !f.equal);
-    const log = options.quiet ? () => {} : (msg: string) => console.log(msg);
 
     if (changedFiles.length === 0) {
-        log("Updater found no changes to files.");
+        logger.info("Updater found no changes to files.");
         return;
     }
 
-    const msg = `Updater found changes to ${changedFiles.length} files:`;
+    const fileOrFiles = changedFiles.length === 1 ? "file" : "files";
+    const msg = `Updater found changes to ${changedFiles.length} ${fileOrFiles}!`;
 
     if (options.test) {
-        const msgParts = [msg];
         for (const file of changedFiles) {
-            msgParts.push(file.toString());
+            logger.warn(file.file);
         }
-        throw Error(msgParts.join("\n"));
+        throw Error(msg);
     }
 
-    log(msg);
     for (const file of changedFiles) {
-        log(file.toString());
+        logger.info(file.file);
         await file.write();
     }
+    logger.info(msg);
 }
 
 async function checkFilesForUpdates(
@@ -115,11 +122,10 @@ async function checkFileForUpdates(
     const contentExpected = await Promise.resolve(
         config.update(contentActual, { file, path: filePath }),
     );
-    const relativePath = path.relative(workspaceDir, filePath).replace(/\\/g, "/");
     const equal = await isEqual(config, contentExpected, contentActual);
     return {
+        file,
         equal,
-        toString: () => `    ${relativePath}`,
         write: () => write(config, filePath, contentExpected),
     };
 }

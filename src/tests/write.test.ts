@@ -143,7 +143,7 @@ suite("Write", () => {
         assertFileAndContent(filePath, "foobar");
     });
 
-    test.only("Remove non-existing file: config", async () => {
+    test("Remove non-existing file: config", async () => {
         const tempDirPath = temporaryDirectory();
         await updaterWithOptions(
             {
